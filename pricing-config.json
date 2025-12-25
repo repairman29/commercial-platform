@@ -1,0 +1,292 @@
+{
+  "services": {
+    "character-system": {
+      "name": "Character System Service",
+      "description": "Complete character management for RPG games",
+      "pricing": {
+        "free": {
+          "name": "Free",
+          "requestsPerMonth": 1000,
+          "features": [
+            "Basic character generation",
+            "5 characters per game",
+            "Standard templates",
+            "Community support"
+          ],
+          "limits": {
+            "characters": 5,
+            "crews": 1,
+            "apiCalls": 1000
+          }
+        },
+        "creator": {
+          "name": "Creator",
+          "price": 39,
+          "requestsPerMonth": 10000,
+          "features": [
+            "Advanced character generation",
+            "Unlimited characters",
+            "Custom templates",
+            "Progression systems",
+            "Crew management",
+            "Email support"
+          ],
+          "limits": {
+            "characters": -1,
+            "crews": -1,
+            "apiCalls": 10000
+          }
+        },
+        "studio": {
+          "name": "Studio",
+          "price": 149,
+          "requestsPerMonth": 100000,
+          "features": [
+            "All Creator features",
+            "Multi-game support",
+            "Analytics dashboard",
+            "Priority support",
+            "Custom integrations",
+            "SLA guarantee"
+          ],
+          "limits": {
+            "characters": -1,
+            "crews": -1,
+            "apiCalls": 100000,
+            "games": 10
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "requestsPerMonth": "Unlimited",
+          "features": [
+            "All Studio features",
+            "Unlimited games",
+            "Dedicated support",
+            "Custom development",
+            "White-label options",
+            "On-premise deployment"
+          ],
+          "limits": {
+            "characters": -1,
+            "crews": -1,
+            "apiCalls": -1,
+            "games": -1
+          }
+        }
+      }
+    },
+    "combat-system": {
+      "name": "Combat System Service",
+      "description": "Advanced combat mechanics and balance",
+      "pricing": {
+        "free": {
+          "name": "Free",
+          "requestsPerMonth": 500,
+          "features": [
+            "Basic combat resolution",
+            "Standard enemy templates",
+            "Community support"
+          ],
+          "limits": {
+            "combats": 50,
+            "apiCalls": 500
+          }
+        },
+        "professional": {
+          "name": "Professional",
+          "price": 79,
+          "requestsPerMonth": 50000,
+          "features": [
+            "Advanced combat mechanics",
+            "Procedural enemy generation",
+            "Balance analytics",
+            "Dynamic difficulty",
+            "Email support"
+          ],
+          "limits": {
+            "combats": 5000,
+            "apiCalls": 50000
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "requestsPerMonth": "Unlimited",
+          "features": [
+            "All Professional features",
+            "Custom combat engines",
+            "Esports integration",
+            "Real-time analytics",
+            "Dedicated support",
+            "SLA guarantee"
+          ],
+          "limits": {
+            "combats": -1,
+            "apiCalls": -1
+          }
+        }
+      }
+    },
+    "ai-gm": {
+      "name": "AI Game Master Service",
+      "description": "Intelligent narrative generation and player interaction",
+      "pricing": {
+        "free": {
+          "name": "Free",
+          "requestsPerMonth": 100,
+          "features": [
+            "Basic narrative generation",
+            "Standard scenarios",
+            "Community support"
+          ],
+          "limits": {
+            "requests": 100,
+            "tokens": 10000
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "price": 49,
+          "requestsPerMonth": 5000,
+          "features": [
+            "Advanced AI narratives",
+            "Multi-model support",
+            "Player behavior analysis",
+            "Quality assurance",
+            "Email support"
+          ],
+          "limits": {
+            "requests": 5000,
+            "tokens": 500000
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "requestsPerMonth": "Unlimited",
+          "features": [
+            "All Pro features",
+            "Custom AI models",
+            "Multi-language support",
+            "Enterprise integration",
+            "Dedicated support",
+            "SLA guarantee"
+          ],
+          "limits": {
+            "requests": -1,
+            "tokens": -1
+          }
+        }
+      }
+    },
+    "analytics-platform": {
+      "name": "Analytics Platform Service",
+      "description": "Comprehensive game analytics and insights",
+      "pricing": {
+        "free": {
+          "name": "Free",
+          "eventsPerMonth": 1000,
+          "features": [
+            "Basic event tracking",
+            "Simple dashboards",
+            "Community support"
+          ],
+          "limits": {
+            "events": 1000,
+            "dashboards": 2
+          }
+        },
+        "growth": {
+          "name": "Growth",
+          "price": 39,
+          "eventsPerMonth": 100000,
+          "features": [
+            "Advanced analytics",
+            "Custom dashboards",
+            "Real-time monitoring",
+            "A/B testing",
+            "Email support"
+          ],
+          "limits": {
+            "events": 100000,
+            "dashboards": 10
+          }
+        },
+        "professional": {
+          "name": "Professional",
+          "price": 149,
+          "eventsPerMonth": 1000000,
+          "features": [
+            "All Growth features",
+            "AI-powered insights",
+            "Predictive analytics",
+            "Custom integrations",
+            "Priority support"
+          ],
+          "limits": {
+            "events": 1000000,
+            "dashboards": 50
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "eventsPerMonth": "Unlimited",
+          "features": [
+            "All Professional features",
+            "Custom AI models",
+            "Enterprise security",
+            "Dedicated support",
+            "SLA guarantee"
+          ],
+          "limits": {
+            "events": -1,
+            "dashboards": -1
+          }
+        }
+      }
+    }
+  },
+  "billing": {
+    "currency": "USD",
+    "billingCycle": "monthly",
+    "trialPeriod": 14,
+    "paymentMethods": ["credit_card", "paypal", "bank_transfer"],
+    "taxes": {
+      "us": 0.0,
+      "eu": 0.21,
+      "default": 0.0
+    },
+    "discounts": {
+      "annual": 0.15,
+      "startup": 0.20,
+      "nonprofit": 0.50
+    }
+  },
+  "usage": {
+    "overage": {
+      "rate": 0.001,
+      "unit": "per_request"
+    },
+    "burst": {
+      "limit": 1000,
+      "window": "minute"
+    },
+    "fairUse": {
+      "warning": 0.8,
+      "limit": 1.0
+    }
+  },
+  "enterprise": {
+    "customPricing": true,
+    "dedicatedSupport": true,
+    "sla": "99.9%",
+    "onPremise": true,
+    "whiteLabel": true,
+    "customFeatures": true,
+    "training": true,
+    "consulting": true
+  }
+}
