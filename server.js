@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const Redis = require('ioredis');
 const { MongoClient } = require('mongodb');
+const axios = require('axios');
 
 // Initialize Express app
 const app = express();
@@ -47,7 +48,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Commercial Platform Core Systems
+// Commercial Platform Core Systems - Enhanced with SMUGGLER'S UNIVERSE Smuggling
 class CommercialPlatform {
   constructor() {
     this.marketplace = new MarketplaceManager();
@@ -56,6 +57,44 @@ class CommercialPlatform {
     this.analytics = new CommercialAnalytics();
     this.userAcquisition = new UserAcquisitionManager();
     this.revenue = new RevenueManager();
+
+    // SMUGGLER'S UNIVERSE Smuggling Integration - Sprint 5
+    this.smuggling = new SmugglingManager();
+    this.cargoSystem = new CargoManager();
+    this.jobBoard = new JobBoardManager();
+    this.blackMarket = new BlackMarketManager();
+    this.tradeRoutes = new TradeRouteManager();
+    this.loreIntegration = null; // Will connect to lore database
+  }
+
+  async initialize() {
+    await this.initializeLoreIntegration();
+    await this.smuggling.initialize();
+    await this.cargoSystem.initialize();
+    await this.jobBoard.initialize();
+    await this.blackMarket.initialize();
+    await this.tradeRoutes.initialize();
+
+    logger.info('Commercial Platform initialized with SMUGGLER\'S UNIVERSE smuggling mechanics');
+  }
+
+  async initializeLoreIntegration() {
+    try {
+      // Connect to lore database for authentic cargo types and jobs
+      this.loreIntegration = {
+        baseUrl: process.env.LORE_DATABASE_URL || 'http://localhost:3012',
+        apiKey: process.env.LORE_API_KEY
+      };
+
+      // Test connection
+      const response = await fetch(`${this.loreIntegration.baseUrl}/health`);
+      if (response.ok) {
+        logger.info('Commercial Platform connected to lore database');
+      }
+    } catch (error) {
+      logger.warn('Lore database connection failed for commercial platform:', error.message);
+      this.loreIntegration = null;
+    }
   }
 }
 
@@ -831,20 +870,1020 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
+// SMUGGLER'S UNIVERSE Smuggling Systems - Sprint 5
+class SmugglingManager {
+  constructor() {
+    this.activeRuns = new Map();
+    this.completedRuns = [];
+    this.smugglingStats = {
+      totalRuns: 0,
+      successfulRuns: 0,
+      interceptedRuns: 0,
+      totalValue: 0
+    };
+    this.riskLevels = {
+      low: { interceptionChance: 0.05, rewardMultiplier: 1.2 },
+      medium: { interceptionChance: 0.15, rewardMultiplier: 1.8 },
+      high: { interceptionChance: 0.30, rewardMultiplier: 2.5 },
+      extreme: { interceptionChance: 0.50, rewardMultiplier: 4.0 }
+    };
+  }
+
+  async initialize() {
+    // Load smuggling data from lore
+    await this.loadSmugglingData();
+    // Start smuggling simulation
+    this.startSmugglingSimulation();
+    logger.info('Smuggling Manager initialized');
+  }
+
+  async loadSmugglingData() {
+    if (commercialPlatform.loreIntegration) {
+      try {
+        const response = await axios.get(`${commercialPlatform.loreIntegration.baseUrl}/api/lore/smuggling`);
+        const smugglingData = response.data.data;
+        // Process and store smuggling lore
+        this.smugglingLore = smugglingData;
+      } catch (error) {
+        logger.debug('Failed to load smuggling lore:', error.message);
+        this.smugglingLore = this.getFallbackSmugglingLore();
+      }
+    } else {
+      this.smugglingLore = this.getFallbackSmugglingLore();
+    }
+  }
+
+  getFallbackSmugglingLore() {
+    return {
+      techniques: [
+        'Void-jumping through uncharted space',
+        'Hollowed asteroids for cargo concealment',
+        'False transponder signals',
+        'Crew impersonation',
+        'Bribe networks'
+      ],
+      risks: [
+        'Authority patrols',
+        'Pirate interception',
+        'System malfunctions',
+        'Cargo instability',
+        'Informant betrayal'
+      ],
+      rewards: [
+        'High profit margins',
+        'Rare cargo access',
+        'Faction reputation',
+        'Trade route monopolies'
+      ]
+    };
+  }
+
+  startSmugglingSimulation() {
+    // Simulate background smuggling activity
+    setInterval(() => {
+      this.simulateSmugglingActivity();
+    }, 300000); // Every 5 minutes
+  }
+
+  async simulateSmugglingActivity() {
+    // Random smuggling runs happening in the universe
+    if (Math.random() < 0.3) { // 30% chance every 5 minutes
+      const run = this.generateRandomSmugglingRun();
+      this.activeRuns.set(run.id, run);
+
+      // Simulate run completion after random time
+      setTimeout(() => {
+        this.completeSmugglingRun(run.id);
+      }, Math.random() * 600000 + 300000); // 5-15 minutes
+    }
+  }
+
+  generateRandomSmugglingRun() {
+    const cargoTypes = ['luxury_goods', 'technology', 'weapons', 'narcotics', 'artifacts'];
+    const origins = ['Neo-Vegas', 'Corporate Core', 'Outer Rim', 'Scavenger Belt'];
+    const destinations = ['Free Port', 'Black Market Hub', 'Smuggler\'s Haven'];
+
+    const run = {
+      id: uuidv4(),
+      captain: `Captain ${['Jax', 'Nova', 'Rex', 'Luna', 'Drake'][Math.floor(Math.random() * 5)]}`,
+      cargo: cargoTypes[Math.floor(Math.random() * cargoTypes.length)],
+      origin: origins[Math.floor(Math.random() * origins.length)],
+      destination: destinations[Math.floor(Math.random() * destinations.length)],
+      value: Math.floor(Math.random() * 50000) + 10000,
+      risk: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
+      startedAt: Date.now()
+    };
+
+    return run;
+  }
+
+  completeSmugglingRun(runId) {
+    const run = this.activeRuns.get(runId);
+    if (!run) return;
+
+    const riskLevel = this.riskLevels[run.risk];
+    const success = Math.random() > riskLevel.interceptionChance;
+
+    if (success) {
+      run.success = true;
+      run.reward = Math.floor(run.value * riskLevel.rewardMultiplier);
+      this.smugglingStats.successfulRuns++;
+    } else {
+      run.success = false;
+      run.intercepted = true;
+      this.smugglingStats.interceptedRuns++;
+    }
+
+    run.completedAt = Date.now();
+    this.completedRuns.push(run);
+    this.activeRuns.delete(runId);
+    this.smugglingStats.totalRuns++;
+    this.smugglingStats.totalValue += run.value;
+
+    // Keep only recent runs
+    if (this.completedRuns.length > 100) {
+      this.completedRuns = this.completedRuns.slice(-50);
+    }
+  }
+
+  getSmugglingStats() {
+    return {
+      ...this.smugglingStats,
+      successRate: this.smugglingStats.totalRuns > 0 ?
+        (this.smugglingStats.successfulRuns / this.smugglingStats.totalRuns) * 100 : 0,
+      activeRuns: Array.from(this.activeRuns.values()),
+      recentRuns: this.completedRuns.slice(-10)
+    };
+  }
+}
+
+class CargoManager {
+  constructor() {
+    this.cargoTypes = new Map();
+    this.cargoManifests = new Map();
+    this.cargoStats = {
+      totalCargo: 0,
+      totalValue: 0,
+      contrabandValue: 0
+    };
+  }
+
+  async initialize() {
+    await this.loadCargoTypes();
+    logger.info('Cargo Manager initialized with SMUGGLER\'S UNIVERSE cargo types');
+  }
+
+  async loadCargoTypes() {
+    if (commercialPlatform.loreIntegration) {
+      try {
+        const response = await axios.get(`${commercialPlatform.loreIntegration.baseUrl}/api/lore/cargo`);
+        const cargoData = response.data.data;
+        cargoData.forEach(cargo => {
+          this.cargoTypes.set(cargo.id, cargo);
+        });
+      } catch (error) {
+        logger.debug('Failed to load cargo types from lore:', error.message);
+      }
+    }
+
+    // Fallback cargo types from SMUGGLER'S UNIVERSE
+    this.loadFallbackCargoTypes();
+  }
+
+  loadFallbackCargoTypes() {
+    const cargoTypes = [
+      // Legal Cargo
+      {
+        id: 'bulk_ore',
+        name: 'Bulk Ore',
+        category: 'raw_materials',
+        legality: 'legal',
+        baseValue: 500,
+        volume: 100,
+        description: 'Raw minerals mined from asteroids',
+        rarity: 'common'
+      },
+      {
+        id: 'manufactured_goods',
+        name: 'Manufactured Goods',
+        category: 'consumer_goods',
+        legality: 'legal',
+        baseValue: 2000,
+        volume: 50,
+        description: 'Factory-produced consumer items',
+        rarity: 'common'
+      },
+      {
+        id: 'medical_supplies',
+        name: 'Medical Supplies',
+        category: 'medical',
+        legality: 'legal',
+        baseValue: 1500,
+        volume: 25,
+        description: 'Pharmaceuticals and medical equipment',
+        rarity: 'uncommon'
+      },
+
+      // Contraband
+      {
+        id: 'luxury_spices',
+        name: 'Luxury Spices',
+        category: 'luxury',
+        legality: 'restricted',
+        baseValue: 5000,
+        volume: 10,
+        description: 'Rare spices banned in some systems',
+        rarity: 'rare',
+        smugglingPenalty: 'high'
+      },
+      {
+        id: 'military_tech',
+        name: 'Military Technology',
+        category: 'technology',
+        legality: 'illegal',
+        baseValue: 25000,
+        volume: 5,
+        description: 'Advanced weapons and military hardware',
+        rarity: 'rare',
+        smugglingPenalty: 'extreme'
+      },
+      {
+        id: 'void_artifacts',
+        name: 'Void Artifacts',
+        category: 'artifacts',
+        legality: 'restricted',
+        baseValue: 50000,
+        volume: 2,
+        description: 'Ancient alien technology from the void',
+        rarity: 'legendary',
+        smugglingPenalty: 'extreme'
+      },
+      {
+        id: 'cybernetic_enhancements',
+        name: 'Cybernetic Enhancements',
+        category: 'cybernetics',
+        legality: 'restricted',
+        baseValue: 8000,
+        volume: 8,
+        description: 'Illegal neural implants and augmentations',
+        rarity: 'uncommon',
+        smugglingPenalty: 'medium'
+      },
+      {
+        id: 'stolen_data',
+        name: 'Stolen Corporate Data',
+        category: 'data',
+        legality: 'illegal',
+        baseValue: 15000,
+        volume: 1,
+        description: 'Hacked corporate secrets and trade data',
+        rarity: 'rare',
+        smugglingPenalty: 'high'
+      }
+    ];
+
+    cargoTypes.forEach(cargo => {
+      if (!this.cargoTypes.has(cargo.id)) {
+        this.cargoTypes.set(cargo.id, cargo);
+      }
+    });
+  }
+
+  generateCargoManifest(shipCapacity, riskTolerance = 'medium') {
+    const manifest = {
+      id: uuidv4(),
+      cargo: [],
+      totalValue: 0,
+      totalVolume: 0,
+      riskLevel: 'low',
+      createdAt: Date.now()
+    };
+
+    let remainingCapacity = shipCapacity;
+
+    // Select cargo based on risk tolerance
+    const availableCargo = Array.from(this.cargoTypes.values()).filter(cargo => {
+      switch (riskTolerance) {
+        case 'low': return cargo.legality === 'legal';
+        case 'medium': return cargo.legality !== 'illegal';
+        case 'high': return true; // All cargo including illegal
+        default: return cargo.legality === 'legal';
+      }
+    });
+
+    while (remainingCapacity > 0 && availableCargo.length > 0) {
+      const cargo = availableCargo[Math.floor(Math.random() * availableCargo.length)];
+      const maxQuantity = Math.min(
+        Math.floor(remainingCapacity / cargo.volume),
+        cargo.rarity === 'legendary' ? 1 : 10
+      );
+
+      if (maxQuantity > 0) {
+        const quantity = Math.min(maxQuantity, Math.floor(Math.random() * 5) + 1);
+        const value = cargo.baseValue * quantity;
+
+        manifest.cargo.push({
+          type: cargo.id,
+          name: cargo.name,
+          quantity,
+          unitValue: cargo.baseValue,
+          totalValue: value,
+          volume: cargo.volume * quantity,
+          legality: cargo.legality,
+          category: cargo.category
+        });
+
+        manifest.totalValue += value;
+        manifest.totalVolume += cargo.volume * quantity;
+        remainingCapacity -= cargo.volume * quantity;
+
+        // Update risk level
+        if (cargo.legality === 'illegal') {
+          manifest.riskLevel = 'extreme';
+        } else if (cargo.legality === 'restricted' && manifest.riskLevel === 'low') {
+          manifest.riskLevel = 'medium';
+        }
+      }
+
+      // Remove this cargo type to avoid duplicates
+      const index = availableCargo.indexOf(cargo);
+      if (index > -1) availableCargo.splice(index, 1);
+    }
+
+    this.cargoManifests.set(manifest.id, manifest);
+    this.updateCargoStats(manifest);
+
+    return manifest;
+  }
+
+  updateCargoStats(manifest) {
+    this.cargoStats.totalCargo += manifest.cargo.length;
+    this.cargoStats.totalValue += manifest.totalValue;
+
+    const contraband = manifest.cargo.filter(item =>
+      this.cargoTypes.get(item.type)?.legality === 'illegal'
+    );
+    this.cargoStats.contrabandValue += contraband.reduce((sum, item) => sum + item.totalValue, 0);
+  }
+
+  getCargoStats() {
+    return {
+      ...this.cargoStats,
+      uniqueCargoTypes: this.cargoTypes.size,
+      manifestsGenerated: this.cargoManifests.size,
+      contrabandPercentage: this.cargoStats.totalValue > 0 ?
+        (this.cargoStats.contrabandValue / this.cargoStats.totalValue) * 100 : 0
+    };
+  }
+}
+
+class JobBoardManager {
+  constructor() {
+    this.jobs = new Map();
+    this.completedJobs = [];
+    this.jobStats = {
+      totalJobs: 0,
+      completedJobs: 0,
+      failedJobs: 0,
+      totalPayout: 0
+    };
+  }
+
+  async initialize() {
+    await this.loadJobTemplates();
+    this.startJobGeneration();
+    logger.info('Job Board Manager initialized');
+  }
+
+  async loadJobTemplates() {
+    if (commercialPlatform.loreIntegration) {
+      try {
+        const response = await axios.get(`${commercialPlatform.loreIntegration.baseUrl}/api/lore/jobs`);
+        const jobData = response.data.data;
+        this.jobTemplates = jobData;
+      } catch (error) {
+        logger.debug('Failed to load job templates from lore:', error.message);
+      }
+    }
+
+    this.jobTemplates = this.getFallbackJobTemplates();
+  }
+
+  getFallbackJobTemplates() {
+    return [
+      // Courier Jobs
+      {
+        type: 'courier',
+        name: 'Package Delivery',
+        description: 'Deliver a package to {destination}',
+        risk: 'low',
+        payout: { min: 500, max: 2000 },
+        duration: { min: 2, max: 8 }, // hours
+        requirements: ['reliable_ship'],
+        objectives: ['reach_destination', 'deliver_package']
+      },
+      {
+        type: 'courier',
+        name: 'Express Courier',
+        description: 'Rush delivery to {destination} within 4 hours',
+        risk: 'medium',
+        payout: { min: 1500, max: 4000 },
+        duration: { min: 1, max: 4 },
+        requirements: ['fast_ship', 'experienced_pilot'],
+        objectives: ['reach_destination_quickly', 'deliver_package']
+      },
+
+      // Smuggling Jobs
+      {
+        type: 'smuggling',
+        name: 'Contraband Run',
+        description: 'Smuggle {cargo} from {origin} to {destination}',
+        risk: 'high',
+        payout: { min: 5000, max: 15000 },
+        duration: { min: 6, max: 24 },
+        requirements: ['discreet_ship', 'smuggling_experience'],
+        objectives: ['avoid_authority', 'deliver_cargo_safely']
+      },
+      {
+        type: 'smuggling',
+        name: 'High-Value Contraband',
+        description: 'Transport illegal {cargo} through Authority space',
+        risk: 'extreme',
+        payout: { min: 25000, max: 75000 },
+        duration: { min: 12, max: 48 },
+        requirements: ['stealth_ship', 'elite_smuggler'],
+        objectives: ['evade_patrols', 'deliver_without_detection']
+      },
+
+      // Bounty Jobs
+      {
+        type: 'bounty',
+        name: 'Wanted Criminal',
+        description: 'Capture or eliminate wanted criminal {target}',
+        risk: 'high',
+        payout: { min: 3000, max: 10000 },
+        duration: { min: 4, max: 16 },
+        requirements: ['combat_ready', 'tracking_skills'],
+        objectives: ['locate_target', 'capture_or_eliminate']
+      },
+
+      // Salvage Jobs
+      {
+        type: 'salvage',
+        name: 'Derelict Ship Recovery',
+        description: 'Salvage valuable cargo from derelict ship at {location}',
+        risk: 'medium',
+        payout: { min: 2000, max: 8000 },
+        duration: { min: 3, max: 12 },
+        requirements: ['salvage_equipment'],
+        objectives: ['reach_location', 'salvage_cargo']
+      }
+    ];
+  }
+
+  startJobGeneration() {
+    // Generate new jobs periodically
+    setInterval(() => {
+      this.generateRandomJobs();
+    }, 600000); // Every 10 minutes
+
+    // Clean up expired jobs
+    setInterval(() => {
+      this.cleanupExpiredJobs();
+    }, 3600000); // Every hour
+  }
+
+  generateRandomJobs(count = 3) {
+    for (let i = 0; i < count; i++) {
+      const template = this.jobTemplates[Math.floor(Math.random() * this.jobTemplates.length)];
+      const job = this.createJobFromTemplate(template);
+      this.jobs.set(job.id, job);
+    }
+  }
+
+  createJobFromTemplate(template) {
+    const job = {
+      id: uuidv4(),
+      type: template.type,
+      name: template.name,
+      description: this.fillJobDescription(template.description),
+      risk: template.risk,
+      payout: this.calculatePayout(template.payout),
+      duration: this.calculateDuration(template.duration),
+      requirements: template.requirements,
+      objectives: template.objectives,
+      status: 'available',
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000), // 24 hours
+      issuer: this.generateJobIssuer(template.type)
+    };
+
+    return job;
+  }
+
+  fillJobDescription(description) {
+    const locations = ['Neo-Vegas Orbit', 'Free Port Station', 'Scavenger Belt Outpost', 'Corporate Core Hub'];
+    const cargo = ['luxury goods', 'military tech', 'medical supplies', 'stolen data'];
+
+    return description
+      .replace('{destination}', locations[Math.floor(Math.random() * locations.length)])
+      .replace('{origin}', locations[Math.floor(Math.random() * locations.length)])
+      .replace('{location}', locations[Math.floor(Math.random() * locations.length)])
+      .replace('{cargo}', cargo[Math.floor(Math.random() * cargo.length)])
+      .replace('{target}', `Criminal #${Math.floor(Math.random() * 1000)}`);
+  }
+
+  calculatePayout(payoutRange) {
+    const base = Math.random() * (payoutRange.max - payoutRange.min) + payoutRange.min;
+    return Math.floor(base);
+  }
+
+  calculateDuration(durationRange) {
+    const hours = Math.random() * (durationRange.max - durationRange.min) + durationRange.min;
+    return Math.floor(hours);
+  }
+
+  generateJobIssuer(jobType) {
+    const issuers = {
+      courier: ['Local Merchant', 'Corporate Logistics', 'Guild Dispatcher'],
+      smuggling: ['Syndicate Contact', 'Black Market Broker', 'Smuggler\'s Guild'],
+      bounty: ['Authority Marshal', 'Corporate Security', 'Private Contractor'],
+      salvage: ['Scavenger Clan', 'Salvage Company', 'Independent Contractor']
+    };
+
+    const typeIssuers = issuers[jobType] || ['Unknown'];
+    return typeIssuers[Math.floor(Math.random() * typeIssuers.length)];
+  }
+
+  cleanupExpiredJobs() {
+    const now = Date.now();
+    for (const [jobId, job] of this.jobs) {
+      if (job.expiresAt < now && job.status === 'available') {
+        this.jobs.delete(jobId);
+      }
+    }
+  }
+
+  acceptJob(jobId, playerId) {
+    const job = this.jobs.get(jobId);
+    if (!job || job.status !== 'available') {
+      throw new Error('Job not available');
+    }
+
+    job.status = 'active';
+    job.acceptedBy = playerId;
+    job.acceptedAt = Date.now();
+    job.deadline = job.acceptedAt + (job.duration * 60 * 60 * 1000);
+
+    return job;
+  }
+
+  completeJob(jobId, success = true) {
+    const job = this.jobs.get(jobId);
+    if (!job || job.status !== 'active') {
+      throw new Error('Job not active');
+    }
+
+    job.status = success ? 'completed' : 'failed';
+    job.completedAt = Date.now();
+
+    this.completedJobs.push(job);
+    this.jobStats.totalJobs++;
+    if (success) {
+      this.jobStats.completedJobs++;
+      this.jobStats.totalPayout += job.payout;
+    } else {
+      this.jobStats.failedJobs++;
+    }
+
+    // Keep only recent completed jobs
+    if (this.completedJobs.length > 100) {
+      this.completedJobs = this.completedJobs.slice(-50);
+    }
+
+    return job;
+  }
+
+  getJobStats() {
+    return {
+      ...this.jobStats,
+      successRate: this.jobStats.totalJobs > 0 ?
+        (this.jobStats.completedJobs / this.jobStats.totalJobs) * 100 : 0,
+      activeJobs: Array.from(this.jobs.values()).filter(job => job.status === 'active').length,
+      availableJobs: Array.from(this.jobs.values()).filter(job => job.status === 'available').length
+    };
+  }
+}
+
+class BlackMarketManager {
+  constructor() {
+    this.listings = new Map();
+    this.transactions = [];
+    this.marketStats = {
+      totalListings: 0,
+      totalTransactions: 0,
+      totalVolume: 0
+    };
+  }
+
+  async initialize() {
+    this.startMarketFluctuations();
+    logger.info('Black Market Manager initialized');
+  }
+
+  createBlackMarketListing(itemData, sellerId) {
+    const listing = {
+      id: uuidv4(),
+      item: itemData,
+      sellerId,
+      askingPrice: this.calculateBlackMarketPrice(itemData),
+      status: 'active',
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (4 * 60 * 60 * 1000), // 4 hours
+      risk: this.calculateListingRisk(itemData)
+    };
+
+    this.listings.set(listing.id, listing);
+    this.marketStats.totalListings++;
+
+    return listing;
+  }
+
+  calculateBlackMarketPrice(itemData) {
+    const basePrice = itemData.baseValue || 1000;
+    const rarityMultiplier = {
+      common: 1.0,
+      uncommon: 1.5,
+      rare: 2.5,
+      legendary: 5.0
+    };
+
+    const legalityMultiplier = {
+      legal: 1.0,
+      restricted: 1.8,
+      illegal: 3.0
+    };
+
+    const marketVolatility = 0.8 + Math.random() * 0.4; // 0.8-1.2
+
+    return Math.floor(
+      basePrice *
+      (rarityMultiplier[itemData.rarity] || 1.0) *
+      (legalityMultiplier[itemData.legality] || 1.0) *
+      marketVolatility
+    );
+  }
+
+  calculateListingRisk(itemData) {
+    const baseRisk = {
+      legal: 'low',
+      restricted: 'medium',
+      illegal: 'high'
+    };
+
+    return baseRisk[itemData.legality] || 'medium';
+  }
+
+  purchaseBlackMarketItem(listingId, buyerId) {
+    const listing = this.listings.get(listingId);
+    if (!listing || listing.status !== 'active') {
+      throw new Error('Listing not available');
+    }
+
+    // Simulate black market transaction risks
+    const interceptionRisk = listing.risk === 'high' ? 0.2 : listing.risk === 'medium' ? 0.1 : 0.05;
+    const intercepted = Math.random() < interceptionRisk;
+
+    const transaction = {
+      id: uuidv4(),
+      listingId,
+      buyerId,
+      sellerId: listing.sellerId,
+      item: listing.item,
+      price: listing.askingPrice,
+      status: intercepted ? 'intercepted' : 'completed',
+      timestamp: Date.now(),
+      risk: listing.risk
+    };
+
+    this.transactions.push(transaction);
+    this.marketStats.totalTransactions++;
+    this.marketStats.totalVolume += transaction.price;
+
+    if (!intercepted) {
+      listing.status = 'sold';
+    }
+
+    return transaction;
+  }
+
+  startMarketFluctuations() {
+    // Update prices periodically
+    setInterval(() => {
+      this.updateMarketPrices();
+    }, 1800000); // Every 30 minutes
+  }
+
+  updateMarketPrices() {
+    for (const [listingId, listing] of this.listings) {
+      if (listing.status === 'active') {
+        const volatility = 0.9 + Math.random() * 0.2; // ±10%
+        listing.askingPrice = Math.floor(listing.askingPrice * volatility);
+      }
+    }
+  }
+
+  getBlackMarketStats() {
+    const activeListings = Array.from(this.listings.values()).filter(l => l.status === 'active');
+    const recentTransactions = this.transactions.slice(-20);
+
+    return {
+      ...this.marketStats,
+      activeListings: activeListings.length,
+      averagePrice: activeListings.length > 0 ?
+        activeListings.reduce((sum, l) => sum + l.askingPrice, 0) / activeListings.length : 0,
+      recentTransactions,
+      interceptionRate: recentTransactions.length > 0 ?
+        (recentTransactions.filter(t => t.status === 'intercepted').length / recentTransactions.length) * 100 : 0
+    };
+  }
+}
+
+class TradeRouteManager {
+  constructor() {
+    this.routes = new Map();
+    this.routeStats = {
+      activeRoutes: 0,
+      totalTraffic: 0,
+      interdictions: 0
+    };
+  }
+
+  async initialize() {
+    await this.generateTradeRoutes();
+    this.startRouteSimulation();
+    logger.info('Trade Route Manager initialized');
+  }
+
+  async generateTradeRoutes() {
+    const locations = [
+      'Neo-Vegas Orbit', 'Free Port Station', 'Corporate Core Hub',
+      'Scavenger Belt Outpost', 'Authority Patrol Base', 'Syndicate Hideout'
+    ];
+
+    // Generate major trade routes
+    for (let i = 0; i < locations.length; i++) {
+      for (let j = i + 1; j < locations.length; j++) {
+        const route = {
+          id: `${locations[i]}-${locations[j]}`,
+          start: locations[i],
+          end: locations[j],
+          distance: Math.floor(Math.random() * 50) + 10, // 10-60 light years
+          traffic: Math.floor(Math.random() * 100) + 10, // 10-110 ships per day
+          risk: this.calculateRouteRisk(locations[i], locations[j]),
+          tolls: this.calculateRouteTolls(locations[i], locations[j]),
+          createdAt: Date.now()
+        };
+
+        this.routes.set(route.id, route);
+      }
+    }
+
+    this.routeStats.activeRoutes = this.routes.size;
+  }
+
+  calculateRouteRisk(start, end) {
+    // Authority presence increases risk
+    const authorityRisk = (start.includes('Authority') || end.includes('Authority')) ? 0.3 : 0;
+    // Syndicate routes are riskier
+    const syndicateRisk = (start.includes('Syndicate') || end.includes('Syndicate')) ? 0.2 : 0;
+    // Long distance increases risk
+    const distanceRisk = Math.random() * 0.2;
+
+    return Math.min(1, authorityRisk + syndicateRisk + distanceRisk);
+  }
+
+  calculateRouteTolls(start, end) {
+    let tolls = 0;
+
+    // Authority routes have tolls
+    if (start.includes('Authority') || end.includes('Authority')) {
+      tolls += 500;
+    }
+
+    // Corporate routes have fees
+    if (start.includes('Corporate') || end.includes('Corporate')) {
+      tolls += 200;
+    }
+
+    return tolls;
+  }
+
+  startRouteSimulation() {
+    // Simulate trade traffic
+    setInterval(() => {
+      this.simulateTradeTraffic();
+    }, 300000); // Every 5 minutes
+  }
+
+  simulateTradeTraffic() {
+    for (const [routeId, route] of this.routes) {
+      // Random traffic fluctuation
+      const trafficChange = Math.floor((Math.random() - 0.5) * 20);
+      route.traffic = Math.max(0, route.traffic + trafficChange);
+
+      // Random interdictions
+      if (Math.random() < route.risk * 0.1) {
+        route.interdictions = (route.interdictions || 0) + 1;
+        this.routeStats.interdictions++;
+      }
+
+      this.routeStats.totalTraffic += route.traffic;
+    }
+  }
+
+  getRouteStats() {
+    const routes = Array.from(this.routes.values());
+    const highRiskRoutes = routes.filter(r => r.risk > 0.5);
+    const totalTolls = routes.reduce((sum, r) => sum + r.tolls, 0);
+
+    return {
+      ...this.routeStats,
+      totalRoutes: routes.length,
+      highRiskRoutes: highRiskRoutes.length,
+      averageRisk: routes.length > 0 ?
+        routes.reduce((sum, r) => sum + r.risk, 0) / routes.length : 0,
+      totalTolls,
+      averageTraffic: routes.length > 0 ?
+        routes.reduce((sum, r) => sum + r.traffic, 0) / routes.length : 0
+    };
+  }
+}
+
+// Initialize Commercial Platform with SMUGGLER'S UNIVERSE smuggling
+const commercialPlatform = new CommercialPlatform();
+
+// API Routes for SMUGGLER'S UNIVERSE Smuggling
+app.get('/api/smuggling/stats', async (req, res) => {
+  try {
+    const stats = commercialPlatform.smuggling.getSmugglingStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    logger.error('Error getting smuggling stats:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/cargo/manifest', async (req, res) => {
+  try {
+    const { shipCapacity, riskTolerance } = req.body;
+    const manifest = commercialPlatform.cargoSystem.generateCargoManifest(shipCapacity, riskTolerance);
+    res.json({ success: true, data: manifest });
+  } catch (error) {
+    logger.error('Error generating cargo manifest:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/cargo/stats', async (req, res) => {
+  try {
+    const stats = commercialPlatform.cargoSystem.getCargoStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    logger.error('Error getting cargo stats:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/jobs/available', async (req, res) => {
+  try {
+    const jobs = Array.from(commercialPlatform.jobBoard.jobs.values())
+      .filter(job => job.status === 'available');
+    res.json({ success: true, data: jobs });
+  } catch (error) {
+    logger.error('Error getting available jobs:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/jobs/:jobId/accept', async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { playerId } = req.body;
+    const job = commercialPlatform.jobBoard.acceptJob(jobId, playerId);
+    res.json({ success: true, data: job });
+  } catch (error) {
+    logger.error('Error accepting job:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/jobs/:jobId/complete', async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { success } = req.body;
+    const job = commercialPlatform.jobBoard.completeJob(jobId, success);
+    res.json({ success: true, data: job });
+  } catch (error) {
+    logger.error('Error completing job:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/jobs/stats', async (req, res) => {
+  try {
+    const stats = commercialPlatform.jobBoard.getJobStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    logger.error('Error getting job stats:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/blackmarket/listing', async (req, res) => {
+  try {
+    const { itemData, sellerId } = req.body;
+    const listing = commercialPlatform.blackMarket.createBlackMarketListing(itemData, sellerId);
+    res.json({ success: true, data: listing });
+  } catch (error) {
+    logger.error('Error creating black market listing:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/blackmarket/listings', async (req, res) => {
+  try {
+    const listings = Array.from(commercialPlatform.blackMarket.listings.values())
+      .filter(listing => listing.status === 'active');
+    res.json({ success: true, data: listings });
+  } catch (error) {
+    logger.error('Error getting black market listings:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/blackmarket/:listingId/purchase', async (req, res) => {
+  try {
+    const { listingId } = req.params;
+    const { buyerId } = req.body;
+    const transaction = commercialPlatform.blackMarket.purchaseBlackMarketItem(listingId, buyerId);
+    res.json({ success: true, data: transaction });
+  } catch (error) {
+    logger.error('Error purchasing black market item:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/blackmarket/stats', async (req, res) => {
+  try {
+    const stats = commercialPlatform.blackMarket.getBlackMarketStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    logger.error('Error getting black market stats:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/traderoutes', async (req, res) => {
+  try {
+    const routes = Array.from(commercialPlatform.tradeRoutes.routes.values());
+    res.json({ success: true, data: routes });
+  } catch (error) {
+    logger.error('Error getting trade routes:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/traderoutes/stats', async (req, res) => {
+  try {
+    const stats = commercialPlatform.tradeRoutes.getRouteStats();
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    logger.error('Error getting trade route stats:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Initialize and start server
 async function startServer() {
   try {
     await initializeDatabase();
+    await commercialPlatform.initialize();
 
     app.listen(PORT, () => {
       logger.info(`Commercial Platform running on port ${PORT}`);
-      console.log(`💰 Commercial Platform v2.0 - Full Commercial Launch`);
+      console.log(`💰 Commercial Platform v3.0 - SMUGGLER'S UNIVERSE Commercial Launch`);
       console.log(`🌐 Listening on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🛒 Marketplace: http://localhost:${PORT}/api/marketplace/listings`);
       console.log(`💳 Payments: http://localhost:${PORT}/api/payments/process`);
       console.log(`📈 Analytics: http://localhost:${PORT}/api/analytics/dashboard`);
       console.log(`🎯 Acquisition: http://localhost:${PORT}/api/acquisition/campaigns`);
+      console.log(`🚀 Smuggling: http://localhost:${PORT}/api/smuggling/stats`);
+      console.log(`📦 Cargo: http://localhost:${PORT}/api/cargo/manifest`);
+      console.log(`💼 Jobs: http://localhost:${PORT}/api/jobs/available`);
+      console.log(`🕵️ Black Market: http://localhost:${PORT}/api/blackmarket/listings`);
+      console.log(`🛣️ Trade Routes: http://localhost:${PORT}/api/traderoutes`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error.message);
